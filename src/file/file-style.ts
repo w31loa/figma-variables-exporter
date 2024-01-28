@@ -136,7 +136,7 @@ export class FileStyle {
 
     return ""
   }
-
+// и тут
   protected getEffectStylesContent() {
     if (this.effectStyles.length > 0) {
       let content = "/* Effect Styles  */\n"
@@ -185,7 +185,7 @@ export class FileStyle {
 
     return ""
   }
-
+  // тут тоже пиксели
   protected getFontStylesContent() {
     if (this.fontStyles.length > 0) {
       let content = "/* Text Styles  */\n"
@@ -236,8 +236,8 @@ export class FileStyle {
 
     return "";
   }
-
-  protected getVariablesContent() {
+//тут добавить проверку опций и если есть передавать в ремамах то просто концертировать пиксили в ремы
+protected getVariablesContent() {
     if (this.variables.length > 0) {
       let content = " /* Variables  */" + this.variableStart;
 
@@ -249,6 +249,7 @@ export class FileStyle {
         } else if (variable.value.type == "RGBA") {
           content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: rgba(${variable.value.value.r}, ${variable.value.value.g}, ${variable.value.value.b}, ${variable.value.value.a});`
         } else {
+          //вот где обычные перменные
           content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: ${variable.value.value}px;`
         }
       }
