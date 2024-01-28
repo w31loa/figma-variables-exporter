@@ -236,7 +236,7 @@ export class FileStyle {
 
     return "";
   }
-//тут добавить проверку опций и если есть передавать в ремамах то просто концертировать пиксили в ремы
+//тут добавить проверку опций и если есть передавать в ремамах то просто концертировать пиксили в ремы 1111)))
 protected getVariablesContent() {
     if (this.variables.length > 0) {
       let content = " /* Variables  */" + this.variableStart;
