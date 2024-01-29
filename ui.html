@@ -360,17 +360,24 @@
 
 
   document.querySelector("#selector-collections").addEventListener('change',(e)=>{
-            if(e.target.value != 'ALL') {
-              
-              document.querySelector("#selector-modes").innerHTML = '<option value="ALL">All modes</option>'
-              sendEvent('action::getModes', e.target.value)
+    if(e.target.value != 'ALL') {
+      
+      document.querySelector("#selector-modes").innerHTML = '<option value="ALL">All modes</option>'
+      sendEvent('action::getModes', e.target.value)
 
-            }else{
+    }else{
+      document.getElementById('checkbox-postfix').parentElement.classList.add('hidden')
+      document.querySelector("#selector-modes").innerHTML = '<option value="ALL">All modes</option>'
 
-              document.querySelector("#selector-modes").innerHTML = '<option value="ALL">All modes</option>'
-
-            }
+    }
             
+  })
+  document.querySelector("#selector-modes").addEventListener('change',(e)=>{
+    if(e.target.value != 'ALL') {
+      document.getElementById('checkbox-postfix').parentElement.classList.remove('hidden')
+    }else{
+      document.getElementById('checkbox-postfix').parentElement.classList.add('hidden')
+    }
   })
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -422,9 +429,9 @@
 
 
   const prefixToggleVisability = (modes)=>{
-    if(modes.length>1){
+    if(modes.length>1 ){
       document.getElementById('checkbox-postfix').parentElement.classList.add('hidden')
-    }else{
+    }else {
       document.getElementById('checkbox-postfix').parentElement.classList.remove('hidden')
       
     }
