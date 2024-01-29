@@ -239,6 +239,10 @@
     padding: 6px 8px;
     border-radius: 8px;
   }
+  #export{
+    height: 64px;
+  }
+
 </style>
 
 <style>
@@ -265,13 +269,20 @@
   </div>
   <div class="plugin-row">
     <select name="collection" id="selector-collections">
-      <option value="ALL">All</option>
+      <option value="ALL">All collections</option>
+    </select>
+    <select name="mode" id="selector-modes">
+      <option value="ALL">All modes</option>
     </select>
   </div>
   <div class="plugin-row">
     <div class="plugin-checkbox">
       <label for="checkbox-sort">Sort variables by their hierarchy and place them in different folders</label>
       <input type="checkbox" id="checkbox-sort" name="sort">
+    </div>
+    <div class="plugin-checkbox">
+      <label for="checkbox-postfix">Disable "-mode" postfix</label>
+      <input type="checkbox" id="checkbox-postfix" name="postfix"  value="off">
     </div>
   </div>
   <div class="plugin-row">
@@ -309,6 +320,16 @@
         <input type="radio" name="color" id="radio-color-rgba" value="RGBA">
       </div>
     </div>
+    <div class="radio-row">
+      <div class="plugin-radio">
+        <label for="radio-px">PX</label>
+        <input type="radio" name="units" id="radio-px" checked value="PX">
+      </div>
+      <div class="plugin-radio">
+        <label for="radio-rem">REM</label>
+        <input type="radio" name="units" id="radio-rem" value="REM">
+      </div>
+    </div>
   </div>
   <div class="plugin-row">
     <button id="export" type="submit">Export</button>
@@ -339,7 +360,7 @@
     sendEvent("action::setHeight", document.getElementById("plugin-form").clientHeight + 52);
 
     const formElement = document.querySelector("#plugin-form")
-
+    
     formElement.onsubmit = async (e) => {
       e.preventDefault();
 
@@ -347,7 +368,7 @@
       for (let [name, value] of new FormData(formElement)) {
         data[name] = value;
       }
-
+      console.log(data)
       sendEvent("action::export", data);
     }
   })
@@ -371,6 +392,7 @@
       } else if (msg.data.pluginMessage.type == "collections") {
         for (const collection of msg.data.pluginMessage.collections) {
           document.querySelector("#selector-collections").innerHTML += `<option value="${collection.id}">${collection.name}</option>`
+          // document.querySelector("#selector-collections").innerHTML += `<option value="${collection}">${collection.name}</option>`
         }
       }
     }
