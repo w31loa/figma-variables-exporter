@@ -683,6 +683,7 @@ class FileStyle {
         }
         return "";
     }
+    // и тут
     getEffectStylesContent() {
         if (this.effectStyles.length > 0) {
             let content = "/* Effect Styles  */\n";
@@ -720,6 +721,7 @@ class FileStyle {
         }
         return "";
     }
+    // тут тоже пиксели
     getFontStylesContent() {
         if (this.fontStyles.length > 0) {
             let content = "/* Text Styles  */\n";
@@ -757,6 +759,7 @@ class FileStyle {
         }
         return "";
     }
+    //тут добавить проверку опций и если есть передавать в ремамах то просто концертировать пиксили в ремы 1111)))
     getVariablesContent() {
         if (this.variables.length > 0) {
             let content = " /* Variables  */" + this.variableStart;
@@ -771,6 +774,7 @@ class FileStyle {
                     content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: rgba(${variable.value.value.r}, ${variable.value.value.g}, ${variable.value.value.b}, ${variable.value.value.a});`;
                 }
                 else {
+                    //вот где обычные перменные
                     content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: ${variable.value.value}px;`;
                 }
             }
@@ -822,10 +826,11 @@ class ExporterService {
         this.options = options;
         this.FileClass = options.lang == "SCSS" ? FileStyleScss : FileStyle;
     }
+    //возвращает значения оъекта file
     getFiles() {
-        console.log(this.files);
         return Object.values(this.files);
     }
+    // дёргает функции заполнения file в зависимости от преданных опций
     runPipeline() {
         this.createVariableContent();
         if (this.options.exportTextStyles) {
@@ -838,6 +843,7 @@ class ExporterService {
             this.createColorStylesContent();
         }
     }
+    // заполняет file значениями перменных
     createVariableContent() {
         for (const variable of Object.values(this.variables)) {
             if (this.options.collection != "ALL") {
@@ -845,12 +851,13 @@ class ExporterService {
                     continue;
                 }
             }
+            console.log({ mods: variable.valuesByMode });
             for (const variableValue of variable.valuesByMode) {
                 const { directory, filename } = this.getPathFromName(variable.name, "variables", variable.collection.name || "", variableValue.mode || "");
                 const file = this.getFileByPath(directory, filename, this.options);
                 let formattedName = this.getFormattedName(variable.name || "");
                 const formattedValue = this.getFormattedVariableValue(variable, variableValue);
-                if (!this.options.sort) {
+                if (!this.options.sort && this.options.postfix != 'off') {
                     formattedName += "-" + this.getFormattedName(variableValue.mode);
                 }
                 if (formattedValue.type == "ALIAS") {
@@ -868,6 +875,7 @@ class ExporterService {
             }
         }
     }
+    // заполняет переменную file стилями шрифтов
     createFontStylesContent() {
         for (const fontStyle of this.fontStyles) {
             const { directory, filename } = this.getPathFromName(fontStyle.name, "styles", "texts");
@@ -876,6 +884,7 @@ class ExporterService {
             file.addFontStyle(fontStyle);
         }
     }
+    // заполняет переменную file стилями эффектов
     createEffectStylesContent() {
         for (const effectStyle of this.effectStyles) {
             const { directory, filename } = this.getPathFromName(effectStyle.name, "styles", "effects");
@@ -884,6 +893,7 @@ class ExporterService {
             file.addEffectStyle(effectStyle);
         }
     }
+    //заносит цвета в переменную file ну тут пздец какой то происходит
     createColorStylesContent() {
         for (const style of this.colorStyles) {
             const name = this.getFormattedName(style.name);
@@ -891,6 +901,7 @@ class ExporterService {
                 name,
                 layers: []
             };
+            // в каждом style лежит много laeyrs и у них есть type и valueType
             for (const layer of style.layers) {
                 if (layer.type == "SOLID") {
                     if (layer.valueType == "VARIABLE") {
@@ -915,6 +926,7 @@ class ExporterService {
                     colorStyle.layers.push(layer);
                 }
             }
+            //если нет переменных то
             if (colorStyle.layers.filter(s => s.type == "VARIABLE").length == 0) {
                 const { directory, filename } = this.getPathFromName(style.name, "styles", "colors");
                 const file = this.getFileByPath(directory, filename, this.options);
@@ -923,10 +935,13 @@ class ExporterService {
             }
         }
     }
+    // приобразует название переменной в строчный формат без знаков
     getFormattedName(name) {
         return name.replace(/\//g, "-").replace(/\s+/g, "-").toLowerCase();
     }
+    // фформатирует переменные в зависимости от выбранных опций цвета пу сути отсюда и дет экспорт модов
     getFormattedVariableValue(variable, variableValue) {
+        // ?????????????????
         if (variableValue.value.type == "VARIABLE_ALIAS") {
             const alias = this.variables[variableValue.value.id];
             return { type: "ALIAS", value: alias };
@@ -957,6 +972,7 @@ class ExporterService {
         // variable.resolverType == "FLOAT"
         return { type: "PIXELS", value: Math.round(Number(variableValue.value) * 100) / 100 };
     }
+    //проверяет включина ли функция соритровки по папкам в options и возвращает найзвание файла и путь если нужно разбивать по папкам
     getPathFromName(name, ...prefixes) {
         if (!this.options.sort) {
             return { directory: "", filename: "index" };
@@ -969,6 +985,7 @@ class ExporterService {
             directory: path.join(...prefixes, ...tokens)
         };
     }
+    //  дёргает fileClass 
     getFileByPath(directory, filename, options) {
         const pth = path.join(directory, filename);
         if (!this.files[pth]) {
@@ -985,7 +1002,7 @@ new class Plugin {
         this.eventHandlers = new Map();
         console.clear();
         figma.showUI(__html__);
-        figma.ui.resize(550, 450);
+        figma.ui.resize(640, 450);
         figma.ui.onmessage = msg => {
             const handler = this.eventHandlers.get(msg.eventName);
             if (handler)
@@ -993,23 +1010,29 @@ new class Plugin {
         };
         this.eventHandlers.set("action::setHeight", this.onSetHeight.bind(this));
         this.eventHandlers.set("action::export", this.onExport.bind(this));
+        this.eventHandlers.set("action::getModes", this.sendModesToWebView.bind(this));
         this.sendCollectionsToWebView();
+        // this.sendModesToWebView()
     }
     sendCollectionsToWebView() {
         const collections = figma.variables.getLocalVariableCollections().map(e => { return { id: e.id, name: e.name }; });
         figma.ui.postMessage({ type: "collections", collections: collections }, { origin: "*" });
     }
+    sendModesToWebView(collectionId) {
+        const modes = figma.variables.getLocalVariableCollections().filter((e) => e.id == collectionId).map((e) => e.modes);
+        figma.ui.postMessage({ type: "modes", collections: modes }, { origin: "*" });
+    }
     onSetHeight(height) {
-        figma.ui.resize(550, height);
+        figma.ui.resize(640, height);
     }
     onExport(options) {
+        console.log({ options });
         const variables = this.getExportVariables();
         const fontStyles = this.getExportFontStyles();
         const effectStyles = this.getExportEffectStyles();
         const colorStyles = this.getExportColorStyles();
         const exporterService = new ExporterService(variables, fontStyles, effectStyles, colorStyles, options);
         exporterService.runPipeline();
-        console.log({ files: exporterService.getFiles() });
         figma.ui.postMessage({ type: "ui::save_message", files: exporterService.getFiles().map(file => [file.path, file.getFileContent()]) }, { origin: "*" });
     }
     getExportColorStyles() {

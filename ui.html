@@ -242,6 +242,9 @@
   #export{
     height: 64px;
   }
+  #selector-modes{
+    margin: 0 0 0 8px;
+  }
 
 </style>
 
@@ -355,6 +358,21 @@
     }
   }
 
+
+  document.querySelector("#selector-collections").addEventListener('change',(e)=>{
+            if(e.target.value != 'ALL') {
+              
+              document.querySelector("#selector-modes").innerHTML = '<option value="ALL">All modes</option>'
+              sendEvent('action::getModes', e.target.value)
+
+            }else{
+
+              document.querySelector("#selector-modes").innerHTML = '<option value="ALL">All modes</option>'
+
+            }
+            
+  })
+
   document.addEventListener("DOMContentLoaded", () => {
     setVersion(true);
     sendEvent("action::setHeight", document.getElementById("plugin-form").clientHeight + 52);
@@ -374,7 +392,7 @@
   })
 
   window.addEventListener("message", (msg) => {
-    console.log(msg.data)
+    // console.log(msg.data)
     if (msg.data && msg.data.pluginMessage) {
       if (msg.data.pluginMessage.type == "ui::save_message") {
         if (msg.data.pluginMessage.files) {
@@ -392,11 +410,18 @@
       } else if (msg.data.pluginMessage.type == "collections") {
         for (const collection of msg.data.pluginMessage.collections) {
           document.querySelector("#selector-collections").innerHTML += `<option value="${collection.id}">${collection.name}</option>`
-          // document.querySelector("#selector-collections").innerHTML += `<option value="${collection}">${collection.name}</option>`
+        }
+      }else if (msg.data.pluginMessage.type == "modes") {
+        // console.log({msg: msg.data.pluginMessage.collections[0]})
+        for (const mode of msg.data.pluginMessage.collections[0]) {
+          document.querySelector("#selector-modes").innerHTML += `<option value="${mode.modeId}">${mode.name}</option>`
         }
       }
     }
   })
+
+
+
 </script>
 
 <script>

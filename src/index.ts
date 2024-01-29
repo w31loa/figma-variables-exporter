@@ -11,7 +11,7 @@ new class Plugin {
   constructor() {
     console.clear();
     figma.showUI(__html__);
-    figma.ui.resize(550, 450)
+    figma.ui.resize(640, 450)
 
     figma.ui.onmessage = msg => {
       const handler = this.eventHandlers.get(msg.eventName);
@@ -23,21 +23,29 @@ new class Plugin {
     
     this.eventHandlers.set("action::setHeight", this.onSetHeight.bind(this));
     this.eventHandlers.set("action::export", this.onExport.bind(this));
+    this.eventHandlers.set("action::getModes", this.sendModesToWebView.bind(this));
+    
 
     this.sendCollectionsToWebView();
+    // this.sendModesToWebView()
   }
 
   sendCollectionsToWebView() {
     const collections = figma.variables.getLocalVariableCollections().map(e => { return { id: e.id, name: e.name } })
     figma.ui.postMessage({ type: "collections", collections: collections }, { origin: "*" })
   }
+  sendModesToWebView(collectionId:string) {
+    const modes = figma.variables.getLocalVariableCollections().filter((e)=> e.id==collectionId).map((e)=> e.modes)
+    figma.ui.postMessage({ type: "modes", collections: modes }, { origin: "*" })
+  }
 
   onSetHeight(height: number) {
-    figma.ui.resize(550, height);
+    figma.ui.resize(640, height);
   }
   
 
   onExport(options: ExportOptions) {
+    console.log({options})
     const variables = this.getExportVariables();
     const fontStyles = this.getExportFontStyles();
     const effectStyles = this.getExportEffectStyles();
@@ -45,7 +53,6 @@ new class Plugin {
 
     const exporterService = new ExporterService(variables, fontStyles, effectStyles, colorStyles, options);
     exporterService.runPipeline();
-    console.log({files: exporterService.getFiles()})
     figma.ui.postMessage({ type: "ui::save_message", files: exporterService.getFiles().map(file => [file.path, file.getFileContent()]) }, { origin: "*" })
   }
 

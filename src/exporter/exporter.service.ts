@@ -66,6 +66,7 @@ export class ExporterService {
           continue;
         }
       }
+      console.log({mods:  variable.valuesByMode})
 
       for (const variableValue of variable.valuesByMode) {
         const { directory, filename } = this.getPathFromName(variable.name, "variables", variable.collection.name || "", variableValue.mode || "");
@@ -73,7 +74,7 @@ export class ExporterService {
         let formattedName = this.getFormattedName(variable.name || "");
         const formattedValue = this.getFormattedVariableValue(variable, variableValue);
 
-        if (!this.options.sort) {
+        if (!this.options.sort && this.options.postfix != 'off') {
           formattedName += "-" + this.getFormattedName(variableValue.mode)
         }
 
