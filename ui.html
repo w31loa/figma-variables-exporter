@@ -283,7 +283,7 @@
       <label for="checkbox-sort">Sort variables by their hierarchy and place them in different folders</label>
       <input type="checkbox" id="checkbox-sort" name="sort">
     </div>
-    <div class="plugin-checkbox">
+    <div class="plugin-checkbox hidden">
       <label for="checkbox-postfix">Disable "-mode" postfix</label>
       <input type="checkbox" id="checkbox-postfix" name="postfix"  value="off">
     </div>
@@ -386,7 +386,7 @@
       for (let [name, value] of new FormData(formElement)) {
         data[name] = value;
       }
-      console.log(data)
+      // console.log(data)
       sendEvent("action::export", data);
     }
   })
@@ -412,7 +412,7 @@
           document.querySelector("#selector-collections").innerHTML += `<option value="${collection.id}">${collection.name}</option>`
         }
       }else if (msg.data.pluginMessage.type == "modes") {
-        // console.log({msg: msg.data.pluginMessage.collections[0]})
+        prefixToggleVisability(msg.data.pluginMessage.collections[0])
         for (const mode of msg.data.pluginMessage.collections[0]) {
           document.querySelector("#selector-modes").innerHTML += `<option value="${mode.modeId}">${mode.name}</option>`
         }
@@ -421,6 +421,14 @@
   })
 
 
+  const prefixToggleVisability = (modes)=>{
+    if(modes.length>1){
+      document.getElementById('checkbox-postfix').parentElement.classList.add('hidden')
+    }else{
+      document.getElementById('checkbox-postfix').parentElement.classList.remove('hidden')
+      
+    }
+  }
 
 </script>
 
