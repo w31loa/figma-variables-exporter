@@ -147,12 +147,12 @@
 
   .radio-row {
     display: flex;
-    margin-right: 24px;
+    margin-right: 8px;
 
     width: 100%;
   }
 
-  .radio-row:last-child {
+   .radio-row:last-child {
     margin-right: 0px;
   }
 
@@ -171,8 +171,12 @@
   }
 
   .plugin-row {
+    flex-direction: column;
     display: flex;
     margin-bottom: 24px;
+  }
+  .plugin-row:not(:only-of-type){
+    flex-direction: row;
   }
 
   .plugin-col {
@@ -192,6 +196,9 @@
     margin-right: 8;
   }
 
+  .selectors-row{
+    gap:8px
+  }
   .plugin-footer {
     display: flex;
   }
@@ -244,10 +251,39 @@
   }
 
 
+  .plugin-text-input{
+    width: 50%;
+    margin-left: 8px;
+
+  }
+
+  .plugin-text-input input[type="text"]  {
+    background: #1F1F1F0A;
+    color: #1F1F1F;
+    border-radius: 16px;
+    padding: 12px;
+    width: 100%;
+    border: 1px;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .plugin-text-input input[type="text"]:focus{
+    outline: 1px solid  #1F1F1F;
+  }
+  .units-row{
+    transition: .3s;
+    margin: 0;
+  }
+
+  .files-row{
+    flex-direction: column !important;
+  }
+
+
 </style>
 
 <style>
-  @media (max-width: 502px) {
+  /* @media (max-width: 502px) {
     .plugin-row {
       flex-direction: column;
     }
@@ -263,7 +299,7 @@
     #selector-modes{
       margin: 0 0 0 8px;
     }
-  }
+  } */
 </style>
 
 <form class="plugin" id="plugin-form">
@@ -276,7 +312,7 @@
       <button>GO PRO!</button>
     </div>
   </div>
-  <div class="plugin-row">
+  <div class="plugin-row selectors-row">
     <select name="collection" id="selector-collections">
       <option value="ALL">All collections</option>
     </select>
@@ -284,9 +320,9 @@
       <option value="ALL">All modes</option>
     </select>
   </div>
-  <div class="plugin-row">
+  <div class="plugin-row files-row">
     <div class="plugin-checkbox">
-      <label for="checkbox-sort">Sort variables by their hierarchy and place them in different folders</label>
+      <label for="checkbox-sort">Place variables in different folders by their hierarchy</label>
       <input type="checkbox" id="checkbox-sort" name="sort">
     </div>
     <div class="plugin-checkbox hidden">
@@ -299,6 +335,9 @@
       <label for="checkbox-text-styles">Text styles</label>
       <input type="checkbox" id="checkbox-text-styles" name="exportTextStyles">
     </div>
+    
+  </div>
+  <div class="plugin-row ">
     <div class="plugin-checkbox">
       <label for="checkbox-effect-styles">Effect styles</label>
       <input type="checkbox" id="checkbox-effect-styles" name="exportEffectStyles">
@@ -329,7 +368,9 @@
         <input type="radio" name="color" id="radio-color-rgba" value="RGBA">
       </div>
     </div>
-    <div class="radio-row">
+  </div>
+  <div class="plugin-row">
+    <div class="radio-row units-row">
       <div class="plugin-radio">
         <label for="radio-px">PX</label>
         <input type="radio" name="units" id="radio-px" checked value="PX">
@@ -338,6 +379,10 @@
         <label for="radio-rem">REM</label>
         <input type="radio" name="units" id="radio-rem" value="REM">
       </div>
+    </div>
+    <div class="plugin-text-input hidden">
+        <input id="rem-value" type="text">
+
     </div>
   </div>
   <div class="plugin-row">
@@ -386,6 +431,30 @@
     }
   })
 
+  document.querySelector('#radio-rem').addEventListener('change' , (e)=>{
+      if(e.target.checked){
+        document.querySelector('#rem-value').parentElement.classList.remove('hidden')
+        e.target.parentElement.parentElement.style.margin='0'
+        e.target.parentElement.parentElement.style.width='50%'
+      }
+  })
+
+  document.querySelector('#radio-px').addEventListener('change' , (e)=>{
+      if(e.target.checked){
+        document.querySelector('#rem-value').parentElement.classList.add('hidden')
+        e.target.parentElement.parentElement.style.margin='0'
+        e.target.parentElement.parentElement.style.width='100%'
+      }
+      
+  })
+
+
+
+
+
+
+
+
   document.addEventListener("DOMContentLoaded", () => {
     setVersion(true);
     sendEvent("action::setHeight", document.getElementById("plugin-form").clientHeight + 52);
@@ -432,6 +501,8 @@
       }
     }
   })
+
+
 
 
   const prefixToggleVisability = (modes)=>{

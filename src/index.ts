@@ -17,9 +17,6 @@ new class Plugin {
       const handler = this.eventHandlers.get(msg.eventName);
       if (handler) handler(...msg.args);
     }
-
-    
-    
     
     this.eventHandlers.set("action::setHeight", this.onSetHeight.bind(this));
     this.eventHandlers.set("action::export", this.onExport.bind(this));
@@ -40,7 +37,7 @@ new class Plugin {
   }
 
   onSetHeight(height: number) {
-    figma.ui.resize(640, height);
+    figma.ui.resize(420, height);
   }
   
 
