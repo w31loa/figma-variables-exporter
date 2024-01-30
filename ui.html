@@ -286,7 +286,7 @@
     outline: 1px solid  #1F1F1F;
   }
   .units-row{
-    transition: .3s;
+    transition: ease-in-out  .5s;
     margin: 0;
   }
 
@@ -297,9 +297,8 @@
 
   input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    margin: 0; 
 }
 
 
