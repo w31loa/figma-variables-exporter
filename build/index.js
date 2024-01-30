@@ -851,11 +851,10 @@ class ExporterService {
                     continue;
                 }
             }
+            //добавил это условие чтобы работало сортировка по папкам с одним выбранным модом
             if (this.options.mode != 'ALL') {
-                console.log(variable.valuesByMode.filter(e => e.mode == this.options.mode));
                 variable.valuesByMode = variable.valuesByMode.filter(e => e.mode == this.options.mode);
             }
-            console.log({ new: variable.valuesByMode });
             for (const variableValue of variable.valuesByMode) {
                 const { directory, filename } = this.getPathFromName(variable.name, "variables", variable.collection.name || "", variableValue.mode || "");
                 const file = this.getFileByPath(directory, filename, this.options);
@@ -1027,7 +1026,7 @@ new class Plugin {
         figma.ui.postMessage({ type: "modes", collections: modes }, { origin: "*" });
     }
     onSetHeight(height) {
-        figma.ui.resize(640, height);
+        figma.ui.resize(420, height);
     }
     onExport(options) {
         const variables = this.getExportVariables();
