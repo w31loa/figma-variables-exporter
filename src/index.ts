@@ -27,10 +27,10 @@ new class Plugin {
     
 
     this.sendCollectionsToWebView();
-    // this.sendModesToWebView()
   }
 
-  sendCollectionsToWebView() {
+   sendCollectionsToWebView() {
+    console.log({rem:  figma.currentPage})
     const collections = figma.variables.getLocalVariableCollections().map(e => { return { id: e.id, name: e.name } })
     figma.ui.postMessage({ type: "collections", collections: collections }, { origin: "*" })
   }
@@ -45,7 +45,6 @@ new class Plugin {
   
 
   onExport(options: ExportOptions) {
-    console.log({options})
     const variables = this.getExportVariables();
     const fontStyles = this.getExportFontStyles();
     const effectStyles = this.getExportEffectStyles();

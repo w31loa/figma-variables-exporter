@@ -242,9 +242,7 @@
   #export{
     height: 64px;
   }
-  #selector-modes{
-    margin: 0 0 0 8px;
-  }
+
 
 </style>
 
@@ -256,6 +254,14 @@
 
     .plugin-checkbox:not(:first-child) {
       margin-top: 8px;
+    }
+    #selector-modes{
+      margin: 8 0 0 0px;
+    }
+  }
+  @media (min-width: 502px) {
+    #selector-modes{
+      margin: 0 0 0 8px;
     }
   }
 </style>
@@ -421,7 +427,7 @@
       }else if (msg.data.pluginMessage.type == "modes") {
         prefixToggleVisability(msg.data.pluginMessage.collections[0])
         for (const mode of msg.data.pluginMessage.collections[0]) {
-          document.querySelector("#selector-modes").innerHTML += `<option value="${mode.modeId}">${mode.name}</option>`
+          document.querySelector("#selector-modes").innerHTML += `<option value="${mode.name}">${mode.name}</option>`
         }
       }
     }

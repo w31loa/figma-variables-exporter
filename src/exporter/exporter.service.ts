@@ -66,8 +66,11 @@ export class ExporterService {
           continue;
         }
       }
-      console.log({mods:  variable.valuesByMode})
 
+      //добавил это условие чтобы работало сортировка по папкам с одним выбранным модом
+      if(this.options.mode != 'ALL'){
+        variable.valuesByMode = variable.valuesByMode.filter(e=>e.mode==this.options.mode)
+      }
       for (const variableValue of variable.valuesByMode) {
         const { directory, filename } = this.getPathFromName(variable.name, "variables", variable.collection.name || "", variableValue.mode || "");
         const file = this.getFileByPath(directory, filename, this.options);
@@ -230,7 +233,6 @@ export class ExporterService {
     const tokens = [
       ...name.split("/")
     ].slice(0, -1)
- 
     return {
       filename: tokens.length > 0 ? tokens.pop() as string : "index",
       directory: path.join(...prefixes, ...tokens)
@@ -241,7 +243,6 @@ export class ExporterService {
 //  дёргает fileClass 
   private getFileByPath(directory: string, filename: string, options: ExportOptions) {
     const pth = path.join(directory, filename);
-
     if (!this.files[pth]) {
       this.files[pth] = new this.FileClass(directory, filename, options);
     }

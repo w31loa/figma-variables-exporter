@@ -851,7 +851,11 @@ class ExporterService {
                     continue;
                 }
             }
-            console.log({ mods: variable.valuesByMode });
+            if (this.options.mode != 'ALL') {
+                console.log(variable.valuesByMode.filter(e => e.mode == this.options.mode));
+                variable.valuesByMode = variable.valuesByMode.filter(e => e.mode == this.options.mode);
+            }
+            console.log({ new: variable.valuesByMode });
             for (const variableValue of variable.valuesByMode) {
                 const { directory, filename } = this.getPathFromName(variable.name, "variables", variable.collection.name || "", variableValue.mode || "");
                 const file = this.getFileByPath(directory, filename, this.options);
@@ -1012,9 +1016,9 @@ new class Plugin {
         this.eventHandlers.set("action::export", this.onExport.bind(this));
         this.eventHandlers.set("action::getModes", this.sendModesToWebView.bind(this));
         this.sendCollectionsToWebView();
-        // this.sendModesToWebView()
     }
     sendCollectionsToWebView() {
+        console.log({ rem: figma.currentPage });
         const collections = figma.variables.getLocalVariableCollections().map(e => { return { id: e.id, name: e.name }; });
         figma.ui.postMessage({ type: "collections", collections: collections }, { origin: "*" });
     }
@@ -1026,7 +1030,6 @@ new class Plugin {
         figma.ui.resize(640, height);
     }
     onExport(options) {
-        console.log({ options });
         const variables = this.getExportVariables();
         const fontStyles = this.getExportFontStyles();
         const effectStyles = this.getExportEffectStyles();
