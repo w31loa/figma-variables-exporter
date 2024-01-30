@@ -7,6 +7,11 @@ export function unboundRGBA(r: number, g: number, b: number, a: number = 1): RGB
   }
 }
 
+export function pxToRem(px:number, multiplier:number ){
+  const value = px/multiplier
+  return value.toFixed(4)
+}
+
 export function rgbaToHex(value: RGBA) {
   return '#' + (
     value.r.toString(16).padStart(2, '0') + 

@@ -254,10 +254,24 @@
   .plugin-text-input{
     width: 50%;
     margin-left: 8px;
-
+    position: relative;
   }
 
-  .plugin-text-input input[type="text"]  {
+  .plugin-text-input label{
+    font-size: 14px ;
+    color: rgba(31, 31, 31, 0.16);
+    position: absolute;
+    top: 12px;
+  }
+
+  .plugin-text-input label:first-child{
+    left: 12px;
+  }
+  .plugin-text-input label:last-child{
+    right: 12px;
+  }
+
+  .plugin-text-input input[type="number"]  {
     background: #1F1F1F0A;
     color: #1F1F1F;
     border-radius: 16px;
@@ -266,8 +280,9 @@
     border: 1px;
     font-size: 14px;
     font-weight: 400;
+    text-align: center;
   }
-  .plugin-text-input input[type="text"]:focus{
+  .plugin-text-input input[type="number"]:focus{
     outline: 1px solid  #1F1F1F;
   }
   .units-row{
@@ -278,6 +293,14 @@
   .files-row{
     flex-direction: column !important;
   }
+
+
+  input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
 
 
 </style>
@@ -381,7 +404,10 @@
       </div>
     </div>
     <div class="plugin-text-input hidden">
-        <input id="rem-value" type="text">
+        <label for="rem-value">1 rem =</label>
+        <input id="rem-value" name="remValue" value="16" type="number">
+        <label for="rem-value">px</label>
+
 
     </div>
   </div>

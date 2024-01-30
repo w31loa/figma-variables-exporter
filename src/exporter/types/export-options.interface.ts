@@ -6,6 +6,7 @@ export interface ExportOptions {
   mode: "ALL" | string
   color: "RGBA" | "HEX";
   units: "PX"| "REM"
+  remValue?: string,
   exportTextStyles?: string
   exportEffectStyles?: string
   exportColorStyles?: string

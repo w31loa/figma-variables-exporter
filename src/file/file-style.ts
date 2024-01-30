@@ -5,7 +5,7 @@ import { FileAlias } from "./types/file-alias.interface";
 import { FileVariable } from "./types/file-variable.interface";
 import { ExportEffectDropShadow, ExportEffectInnerShadow, ExportEffectStyle } from "../exporter/types/export-effect-style.interface";
 import { FileColorStyle } from "./types/file-color-style.interface";
-import { rgbaToHex, unboundRGBA } from "../utils";
+import { pxToRem, rgbaToHex, unboundRGBA } from "../utils";
 import { ExportOptions } from "../exporter/types/export-options.interface";
 
 export class FileStyle {
@@ -152,8 +152,16 @@ export class FileStyle {
           for (let i = 0; i < shadowEffects.length; i++) {
             const effect = shadowEffects[i]
             const effectColor = unboundRGBA(effect.color.r, effect.color.g, effect.color.b, effect.color.a);
+            //тут адовая гадость))
+            if(this.options.units!='REM'){
 
-            content += ` ${effect.offset.x}px ${effect.offset.y}px ${effect.radius}px ${effect.spread || 0}px rgba(${effectColor.r}, ${effectColor.g}, ${effectColor.b}, ${effectColor.a})`
+              content += ` ${effect.offset.x}px ${effect.offset.y}px ${effect.radius}px ${effect.spread || 0}px rgba(${effectColor.r}, ${effectColor.g}, ${effectColor.b}, ${effectColor.a})`
+
+            }else if(this.options.remValue){
+
+              content += ` ${pxToRem(+effect.offset.x, +this.options.remValue)}rem ${pxToRem(+effect.offset.y, +this.options.remValue)}rem ${pxToRem(+effect.radius, +this.options.remValue)}rem ${effect.spread?pxToRem(+effect.spread, +this.options.remValue): 0}rem rgba(${effectColor.r}, ${effectColor.g}, ${effectColor.b}, ${effectColor.a})`
+             
+            }
 
             if (effect.type == "INNER_SHADOW") {
               content += " inset"
@@ -170,7 +178,11 @@ export class FileStyle {
         for (const effect of style.effects) {
           if (effect.visible) {
             if (effect.type == "LAYER_BLUR") {
-              content += `  filter: blur(${effect.radius}px);\n`
+              if(this.options.units!='REM'){
+                content += `  filter: blur(${effect.radius}px);\n`
+              }else if(this.options.remValue){
+                content += `  filter: blur(${pxToRem(+effect.radius, +this.options.remValue)}rem);\n`
+              }
             } else if (effect.type == "BACKGROUND_BLUR") {
               content += `  backdrop-filter: blur(${effect.radius}px);\n`
             }
@@ -194,10 +206,32 @@ export class FileStyle {
       for (const style of this.fontStyles) {
         content += `.${style.name} {\n`
         content += `  font-family: ${style.fontName.family};\n`
-        content += `  font-size: ${style.fontSize}px;\n`
+
+
+       
+        if(this.options.units!='REM'){
+          content += `  font-size: ${style.fontSize}px;\n`
+          content += `  line-height: ${style.lineHeight.unit == "PIXELS" ? `${style.lineHeight.value}px` : style.lineHeight.unit == "PERCENT" ? `${Math.round(style.lineHeight.value * 100) / 100}%` : "normal"};\n`
+          content += `  letter-spacing: ${style.letterSpacing.value}${style.letterSpacing.unit == "PERCENT" ? "%" : "px"};\n`
+
+        }else if(this.options.remValue){
+          content += `  filter: blur(${pxToRem(+style.fontSize, +this.options.remValue)}rem);\n`
+          content += `  line-height: ${style.lineHeight.unit == "PIXELS" ? `${pxToRem(+style.lineHeight.value, +this.options.remValue)}rem` : style.lineHeight.unit == "PERCENT" ? `${Math.round(style.lineHeight.value * 100) / 100}%` : "normal"};\n`
+          content += `  letter-spacing: ${pxToRem(+style.letterSpacing.value, +this.options.remValue)}${style.letterSpacing.unit == "PERCENT" ? "%" : "px"};\n`
+
+
+        }
+
+
         content += `  font-weight: ${style.fontWeight};\n`
-        content += `  line-height: ${style.lineHeight.unit == "PIXELS" ? `${style.lineHeight.value}px` : style.lineHeight.unit == "PERCENT" ? `${Math.round(style.lineHeight.value * 100) / 100}%` : "normal"};\n`
-        content += `  letter-spacing: ${style.letterSpacing.value}${style.letterSpacing.unit == "PERCENT" ? "%" : "px"};\n`
+
+    
+
+
+
+
+
+
         content += "}\n\n";
       }
 
@@ -250,7 +284,12 @@ protected getVariablesContent() {
           content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: rgba(${variable.value.value.r}, ${variable.value.value.g}, ${variable.value.value.b}, ${variable.value.value.a});`
         } else {
           //вот где обычные перменные
-          content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: ${variable.value.value}px;`
+          if(this.options.units!='REM'){
+            content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: ${variable.value.value}px;`
+          }else if(this.options.remValue){
+            content += `${this.variableTab}${this.getFormattedVariableAssigning(variable.name)}: ${ pxToRem(+variable.value.value, +this.options.remValue) }rem;`
+          }
+            
         }
       }
 

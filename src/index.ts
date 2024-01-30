@@ -42,6 +42,7 @@ new class Plugin {
   
 
   onExport(options: ExportOptions) {
+    console.log(options)
     const variables = this.getExportVariables();
     const fontStyles = this.getExportFontStyles();
     const effectStyles = this.getExportEffectStyles();
