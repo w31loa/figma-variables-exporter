@@ -853,11 +853,9 @@ class ExporterService {
         this.options = options;
         this.FileClass = options.lang == "SCSS" ? FileStyleScss : FileStyle;
     }
-    //возвращает значения оъекта file
     getFiles() {
         return Object.values(this.files);
     }
-    // дёргает функции заполнения file в зависимости от преданных опций
     runPipeline() {
         this.createVariableContent();
         if (this.options.exportTextStyles) {
@@ -870,7 +868,6 @@ class ExporterService {
             this.createColorStylesContent();
         }
     }
-    // заполняет file значениями перменных
     createVariableContent() {
         for (const variable of Object.values(this.variables)) {
             if (this.options.collection != "ALL") {
@@ -878,7 +875,6 @@ class ExporterService {
                     continue;
                 }
             }
-            //добавил это условие чтобы работало сортировка по папкам с одним выбранным модом
             if (this.options.mode != 'ALL') {
                 variable.valuesByMode = variable.valuesByMode.filter(e => e.mode == this.options.mode);
             }
@@ -891,11 +887,6 @@ class ExporterService {
                     formattedName += "-" + this.getFormattedName(variableValue.mode);
                 }
                 if (formattedValue.type == "ALIAS") {
-                    // const aliasPath = this.getPathFromName(formattedValue.value.name, "variables", formattedValue.value.collection.name, variableValue.mode);
-                    // if (this.options.sort) {
-                    //   const aliasFile = this.getFileByPath(aliasPath.directory, aliasPath.filename, this.options);
-                    //   file.addImport(aliasFile);
-                    // }
                     const formattedAliasName = this.getFormattedName(formattedValue.value.name || "");
                     file.addAlias({ from: formattedName, to: formattedAliasName });
                 }
@@ -914,7 +905,6 @@ class ExporterService {
             file.addFontStyle(fontStyle);
         }
     }
-    // заполняет переменную file стилями эффектов
     createEffectStylesContent() {
         for (const effectStyle of this.effectStyles) {
             const { directory, filename } = this.getPathFromName(effectStyle.name, "styles", "effects");
@@ -923,7 +913,6 @@ class ExporterService {
             file.addEffectStyle(effectStyle);
         }
     }
-    //заносит цвета в переменную file ну тут пздец какой то происходит
     createColorStylesContent() {
         for (const style of this.colorStyles) {
             const name = this.getFormattedName(style.name);
@@ -931,7 +920,6 @@ class ExporterService {
                 name,
                 layers: []
             };
-            // в каждом style лежит много laeyrs и у них есть type и valueType
             for (const layer of style.layers) {
                 if (layer.type == "SOLID") {
                     if (layer.valueType == "VARIABLE") {
@@ -956,7 +944,6 @@ class ExporterService {
                     colorStyle.layers.push(layer);
                 }
             }
-            //если нет переменных то
             if (colorStyle.layers.filter(s => s.type == "VARIABLE").length == 0) {
                 const { directory, filename } = this.getPathFromName(style.name, "styles", "colors");
                 const file = this.getFileByPath(directory, filename, this.options);
@@ -965,11 +952,9 @@ class ExporterService {
             }
         }
     }
-    // приобразует название переменной в строчный формат без знаков
     getFormattedName(name) {
         return name.replace(/\//g, "-").replace(/\s+/g, "-").toLowerCase();
     }
-    // фформатирует переменные в зависимости от выбранных опций цвета пу сути отсюда и дет экспорт модов
     getFormattedVariableValue(variable, variableValue) {
         // ?????????????????
         if (variableValue.value.type == "VARIABLE_ALIAS") {
@@ -999,10 +984,8 @@ class ExporterService {
                 };
             }
         }
-        // variable.resolverType == "FLOAT"
         return { type: "PIXELS", value: Math.round(Number(variableValue.value) * 100) / 100 };
     }
-    //проверяет включина ли функция соритровки по папкам в options и возвращает найзвание файла и путь если нужно разбивать по папкам
     getPathFromName(name, ...prefixes) {
         if (!this.options.sort) {
             return { directory: "", filename: "index" };
@@ -1015,7 +998,6 @@ class ExporterService {
             directory: path.join(...prefixes, ...tokens)
         };
     }
-    //  дёргает fileClass 
     getFileByPath(directory, filename, options) {
         const pth = path.join(directory, filename);
         if (!this.files[pth]) {

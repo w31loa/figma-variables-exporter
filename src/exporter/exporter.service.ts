@@ -34,13 +34,11 @@ export class ExporterService {
     this.FileClass = options.lang == "SCSS" ? FileStyleScss : FileStyle;
   }
 
-  //возвращает значения оъекта file
   public getFiles() {
     return Object.values(this.files);
   }
 
 
-// дёргает функции заполнения file в зависимости от преданных опций
   public runPipeline() {
     this.createVariableContent();
 
@@ -58,7 +56,6 @@ export class ExporterService {
   }
 
 
-  // заполняет file значениями перменных
   public createVariableContent() {
     for (const variable of Object.values(this.variables)) {
       if (this.options.collection != "ALL") {
@@ -67,7 +64,6 @@ export class ExporterService {
         }
       }
 
-      //добавил это условие чтобы работало сортировка по папкам с одним выбранным модом
       if(this.options.mode != 'ALL'){
         variable.valuesByMode = variable.valuesByMode.filter(e=>e.mode==this.options.mode)
       }
@@ -82,12 +78,7 @@ export class ExporterService {
         }
 
         if (formattedValue.type == "ALIAS") {
-          // const aliasPath = this.getPathFromName(formattedValue.value.name, "variables", formattedValue.value.collection.name, variableValue.mode);
-
-          // if (this.options.sort) {
-          //   const aliasFile = this.getFileByPath(aliasPath.directory, aliasPath.filename, this.options);
-          //   file.addImport(aliasFile);
-          // }
+      
 
           const formattedAliasName = this.getFormattedName(formattedValue.value.name || "");
           file.addAlias({ from: formattedName, to: formattedAliasName });
@@ -114,7 +105,6 @@ export class ExporterService {
   }
 
 
-// заполняет переменную file стилями эффектов
   private createEffectStylesContent() {
     for (const effectStyle of this.effectStyles) {
       const { directory, filename } = this.getPathFromName(effectStyle.name, "styles", "effects");
@@ -130,7 +120,6 @@ export class ExporterService {
 
 
 
-//заносит цвета в переменную file ну тут пздец какой то происходит
   private createColorStylesContent() {
     for (const style of this.colorStyles) {
       const name = this.getFormattedName(style.name);
@@ -138,7 +127,6 @@ export class ExporterService {
         name,
         layers: []
       }
-      // в каждом style лежит много laeyrs и у них есть type и valueType
       for (const layer of style.layers) {
 
         if (layer.type == "SOLID") {
@@ -167,7 +155,7 @@ export class ExporterService {
           colorStyle.layers.push(layer);
         }
       }
-      //если нет переменных то
+      
       if (colorStyle.layers.filter(s => s.type == "VARIABLE").length == 0) {
         const { directory, filename } = this.getPathFromName(style.name, "styles", "colors");
         const file = this.getFileByPath(directory, filename, this.options)
@@ -178,14 +166,14 @@ export class ExporterService {
     }
   }
 
-  // приобразует название переменной в строчный формат без знаков
+ 
   private getFormattedName(name: string) {
  
     return name.replace(/\//g, "-").replace(/\s+/g, "-").toLowerCase();
   }
 
 
-  // фформатирует переменные в зависимости от выбранных опций цвета пу сути отсюда и дет экспорт модов
+  
   private getFormattedVariableValue(variable: ExportVariable, variableValue: { mode: string, value: VariableValue }): FormattedVariableValue {
     // ?????????????????
     if ((variableValue.value as VariableAlias).type == "VARIABLE_ALIAS") {
@@ -219,12 +207,11 @@ export class ExporterService {
       }
     }
 
-    // variable.resolverType == "FLOAT"
+ 
     return { type: "PIXELS", value: Math.round(Number(variableValue.value) * 100) / 100 }
   }
 
 
-  //проверяет включина ли функция соритровки по папкам в options и возвращает найзвание файла и путь если нужно разбивать по папкам
   private getPathFromName(name: string, ...prefixes: string[]) {
     if (!this.options.sort) {
       return { directory: "", filename: "index" };
@@ -240,7 +227,7 @@ export class ExporterService {
   }
 
 
-//  дёргает fileClass 
+ 
   private getFileByPath(directory: string, filename: string, options: ExportOptions) {
     const pth = path.join(directory, filename);
     if (!this.files[pth]) {
