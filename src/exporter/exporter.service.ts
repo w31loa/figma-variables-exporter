@@ -76,7 +76,7 @@ export class ExporterService {
         const file = this.getFileByPath(directory, filename, this.options);
         let formattedName = this.getFormattedName(variable.name || "");
         const formattedValue = this.getFormattedVariableValue(variable, variableValue);
-
+        //проверяет включена ли сортировка и тогл префикса
         if (!this.options.sort && this.options.postfix != 'off') {
           formattedName += "-" + this.getFormattedName(variableValue.mode)
         }

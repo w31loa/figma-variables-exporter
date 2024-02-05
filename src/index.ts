@@ -31,6 +31,8 @@ new class Plugin {
     const collections = figma.variables.getLocalVariableCollections().map(e => { return { id: e.id, name: e.name } })
     figma.ui.postMessage({ type: "collections", collections: collections }, { origin: "*" })
   }
+
+  //отправляем моды в конкретной коллекции на клиент
   sendModesToWebView(collectionId:string) {
     const modes = figma.variables.getLocalVariableCollections().filter((e)=> e.id==collectionId).map((e)=> e.modes)
     figma.ui.postMessage({ type: "modes", collections: modes }, { origin: "*" })

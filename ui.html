@@ -493,13 +493,11 @@ input::-webkit-inner-spin-button {
       for (let [name, value] of new FormData(formElement)) {
         data[name] = value;
       }
-      // console.log(data)
       sendEvent("action::export", data);
     }
   })
 
   window.addEventListener("message", (msg) => {
-    // console.log(msg.data)
     if (msg.data && msg.data.pluginMessage) {
       if (msg.data.pluginMessage.type == "ui::save_message") {
         if (msg.data.pluginMessage.files) {

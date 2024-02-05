@@ -887,6 +887,7 @@ class ExporterService {
                 const file = this.getFileByPath(directory, filename, this.options);
                 let formattedName = this.getFormattedName(variable.name || "");
                 const formattedValue = this.getFormattedVariableValue(variable, variableValue);
+                //проверяет включена ли сортировка и тогл префикса
                 if (!this.options.sort && this.options.postfix != 'off') {
                     formattedName += "-" + this.getFormattedName(variableValue.mode);
                 }
@@ -1048,6 +1049,7 @@ new class Plugin {
         const collections = figma.variables.getLocalVariableCollections().map(e => { return { id: e.id, name: e.name }; });
         figma.ui.postMessage({ type: "collections", collections: collections }, { origin: "*" });
     }
+    //отправляем моды в конкретной коллекции на клиент
     sendModesToWebView(collectionId) {
         const modes = figma.variables.getLocalVariableCollections().filter((e) => e.id == collectionId).map((e) => e.modes);
         figma.ui.postMessage({ type: "modes", collections: modes }, { origin: "*" });
